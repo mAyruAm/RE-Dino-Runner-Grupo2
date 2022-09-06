@@ -25,3 +25,4 @@ class Dinosaur():
         self.dino_rect.x = self.X_POS
         self.dino_rect.y = self.Y_POS
         self.step_index += 1
+        self.step_index = self.step_index if self.step_index < 10 else 0
