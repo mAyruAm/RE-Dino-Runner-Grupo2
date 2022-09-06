@@ -31,14 +31,13 @@ class Game:
                 self.playing = False
 
     def update(self):
-        pass
+        self.player.run()
 
     def draw(self):
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255))
         self.draw_background()   #imagen
         self.player.draw(self.screen)
-        self.player.run()
         pygame.display.update()
         pygame.display.flip()
 

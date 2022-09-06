@@ -6,12 +6,15 @@ class Dinosaur():
 
     def __init__(self):
         self.image = RUNNING[0]
+        self._pos()
+
+        self.step_index = 0
+
+    def _pos(self):
         self.dino_rect = self.image.get_rect()
 
         self.dino_rect.x = self.X_POS
         self.dino_rect.y = self.Y_POS
-
-        self.step_index = 0
 
     def update(self):
         pass
@@ -21,8 +24,6 @@ class Dinosaur():
 
     def run(self):
         self.image = RUNNING[0] if self.step_index < 5 else RUNNING[1]
-        self.dino_rect = self.image.get_rect()
-        self.dino_rect.x = self.X_POS
-        self.dino_rect.y = self.Y_POS
+        self._pos()
         self.step_index += 1
         self.step_index = self.step_index if self.step_index < 10 else 0
