@@ -27,3 +27,6 @@ class Dinosaur():
         self._pos()
         self.step_index += 1
         self.step_index = self.step_index if self.step_index < 10 else 0
+        print(self.step_index)
+
+
