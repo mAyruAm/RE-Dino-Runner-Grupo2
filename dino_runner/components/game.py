@@ -32,7 +32,7 @@ class Game:
                 self.playing = False
 
     def update(self):
-        pass
+        self.player.update()
 
     def draw(self):
         self.clock.tick(FPS)
