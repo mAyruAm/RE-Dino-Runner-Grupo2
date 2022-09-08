@@ -47,6 +47,8 @@ class Game:
         self.obstacle_manager.draw(self.screen)
         self.player_heart_manager.draw(self.screen)
 
+        self.player.check_lives()
+
         pygame.display.update()
         pygame.display.flip()
         

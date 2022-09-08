@@ -27,6 +27,9 @@ class Dinosaur(Sprite):
         self.dino_jump = False
         self.jump_vel = self.JUMP_VEL
 
+        self.has_lives = False
+        self.lives_transition_time = 0
+
     def update(self, user_input):
         if self.dino_jump:
             self.jump()
@@ -62,4 +65,10 @@ class Dinosaur(Sprite):
 
     def draw(self, screen):
         screen.blit(self.image, (self.dino_rect.x, self.dino_rect.y))
+
+    def check_lives(self):
+        if self.has_lives:
+            transition_time = round((self.lives_transition_time - pygame.time.get_ticks()) / 1000)
+            if transition_time < 0:
+                self.has_lives = False
     
