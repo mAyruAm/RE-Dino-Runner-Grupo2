@@ -22,6 +22,11 @@ class ObstacleManager:
                         self.obstacles.pop()
                         start_transition_time = pygame.time.get_ticks()
                         game.player.lives_transition_time = start_transition_time + 1000
+                    elif not game.player.shield:
+                        pygame.time.delay(500)
+                        game.playing = False
+                        game.death_count += 1
+                        break
                     else:
                         # self.obstacles.remove(obstacle)
                         pygame.time.delay(500)
@@ -31,5 +36,4 @@ class ObstacleManager:
 
     def draw(self, screen):
         for  obstacle in self.obstacles:
-            obstacle.draw(screen) 
-            
+            obstacle.draw(screen)

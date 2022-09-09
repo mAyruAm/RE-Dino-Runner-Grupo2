@@ -5,7 +5,11 @@ from dino_runner.utils.constants import (
     DUCKING,
     RUNNING,
     JUMPING,
-    DEFAULT_TYPE
+    DEFAULT_TYPE,
+    SHIELD_TYPE,
+    DUCKING_SHIELD,
+    RUNNING_SHIELD,
+    JUMPING_SHIELD
 )
 
 class Dinosaur(Sprite):
@@ -13,12 +17,11 @@ class Dinosaur(Sprite):
     Y_POS = 310
     Y_POS_DUCK = 340
     JUMP_VEL = 8.5
-    DUCK_VEL = 8.5
 
     def __init__(self):
-        self.run_img = {DEFAULT_TYPE: RUNNING}
-        self.jump_img = {DEFAULT_TYPE: JUMPING}
-        self.duck_img = {DEFAULT_TYPE: DUCKING}
+        self.duck_img = {DEFAULT_TYPE: DUCKING, SHIELD_TYPE: DUCKING_SHIELD}
+        self.run_img = {DEFAULT_TYPE: RUNNING, SHIELD_TYPE: RUNNING_SHIELD}
+        self.jump_img = {DEFAULT_TYPE: JUMPING, SHIELD_TYPE: JUMPING_SHIELD}
         self.type = DEFAULT_TYPE
         self.image = self.run_img[self.type][0]
 
@@ -29,33 +32,36 @@ class Dinosaur(Sprite):
         self.dino_run = True
         self.dino_jump = False
         self.jump_vel = self.JUMP_VEL
-        self.duck_vel = self.DUCK_VEL
         self.dino_duck = False
 
         self.has_lives = False
         self.lives_transition_time = 0
 
+        self.setup_state_boolean()
+
+    def setup_state_boolean(self):
+        self.has_powerup = False
+        self.shield = False
+        self.show_text = False
+        self.shield_time_up = 0
+
     def update(self, user_input):
         if self.dino_jump:
             self.jump()
-            print("jump")
         if self.dino_duck:
             self.duck()
-            print("duck")
         if self.dino_run:
             self.run()
-            print("run")
-        print(self.dino_run, self.dino_jump, self.dino_duck)
 
         if user_input[pygame.K_UP] and not self.dino_jump:
             self.dino_jump = True
             self.dino_run = False
             self.dino_duck = False
-        elif user_input[pygame.K_DOWN] and not self.dino_duck:
+        elif user_input[pygame.K_DOWN] and not self.dino_jump:
             self.dino_duck = True
             self.dino_run = False
             self.dino_jump = False
-        elif not self.dino_jump and not self.dino_duck:
+        elif not self.dino_jump:
             self.dino_run = True
             self.dino_jump = False
             self.dino_duck = False
@@ -71,26 +77,21 @@ class Dinosaur(Sprite):
         self.step_index += 1
 
     def jump(self):
-        self.image = self.jump_img[self.type]
+        self.image = JUMPING
         if self.dino_jump:
             self.dino_rect.y -= self.jump_vel * 4
             self.jump_vel -= 0.8
         if self.jump_vel < -self.JUMP_VEL:
             self.dino_rect.y = self.Y_POS
             self.dino_jump = False
-            self.dino_duck = False
             self.jump_vel = self.JUMP_VEL
 
     def duck(self):
         self.image = self.duck_img[self.type][self.step_index // 5]
-        if self.dino_duck:
-            self.dino_rect.y = self.Y_POS_DUCK
-            self.duck_vel -= 0.8
-        if self.duck_vel < -self.DUCK_VEL:
-            self.dino_rect.y = self.Y_POS
-            self.dino_duck = False
-            self.dino_jump = False
-            self.duck_vel = self.DUCK_VEL
+        self.dino_rect = self.image.get_rect()
+        self.dino_rect.x = self.X_POS
+        self.dino_rect.y = self.Y_POS_DUCK
+        self.step_index += 1
 
 
     def draw(self, screen):
@@ -101,3 +102,20 @@ class Dinosaur(Sprite):
             transition_time = round((self.lives_transition_time - pygame.time.get_ticks()) / 1000)
             if transition_time < 0:
                 self.has_lives = False
+
+    def check_visibility(self,screen):
+        if self.shield:
+            time_to_show = round( (self.shield_time_up - pygame.time.get_ticks())/1000,2 )
+            if(time_to_show>=0):
+                fond = pygame.font.Font('freesansbold.ttf',18)
+                text = fond.render(f'shield enable for {time_to_show}',True,(0,0,0))
+                textRect = text.get_rect()
+                textRect.center = (500,40)
+                screen.blit(text,textRect)
+            else:
+                self.shield = False
+                self.update_to_default(SHIELD_TYPE)
+
+    def update_to_default(self, current_type):
+        if(self.type == current_type):
+            self.type = DEFAULT_TYPE
