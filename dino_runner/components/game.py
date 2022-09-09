@@ -5,7 +5,7 @@ from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacle_manager import ObstacleManager
 from dino_runner.components.text_utils import get_score_element, get_centered_message
 from dino_runner.components.power_up.power_up_manager import PowerUpManager
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, JUMPING, DEFAULT_TYPE
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, SOUND_BACKGROUND
 
 class Game:
     def __init__(self):
@@ -27,11 +27,14 @@ class Game:
         self.obstacle_manager = ObstacleManager()
         self.player_heart_manager = PlayerHeartManager()
         self.power_up_manager = PowerUpManager()
+        self.background_round = pygame.mixer.music.load(SOUND_BACKGROUND)
+
 
     def run(self):
         # Game loop: events - update - draw
         self.create_comment()
         self.playing = True
+        pygame.mixer.music.play(-1)
         while self.playing:
             self.events()
             self.update()
@@ -59,7 +62,6 @@ class Game:
         self.score()
 
         self.player.check_lives()
-
         pygame.display.update()
         pygame.display.flip()
 

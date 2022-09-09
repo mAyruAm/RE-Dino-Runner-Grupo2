@@ -35,6 +35,7 @@ class ObstacleManager:
                         game.playing = False
                         game.death_count += 1
                         pygame.mixer.Sound.play(self.game_over_sound)
+                        pygame.mixer.music.stop()
                         break
 
 
