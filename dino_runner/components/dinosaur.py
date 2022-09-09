@@ -13,7 +13,8 @@ from dino_runner.utils.constants import (
     HAMMER_TYPE,
     DUCKING_HAMMER,
     RUNNING_HAMMER,
-    JUMPING_HAMMER
+    JUMPING_HAMMER,
+    SOUND_JUMP
 )
 
 class Dinosaur(Sprite):
@@ -42,6 +43,9 @@ class Dinosaur(Sprite):
         self.lives_transition_time = 0
 
         self.setup_state_boolean()
+        self.jump_sound = pygame.mixer.Sound(SOUND_JUMP)
+
+
 
     def setup_state_boolean(self):
         self.has_powerup = False
@@ -52,6 +56,7 @@ class Dinosaur(Sprite):
     def update(self, user_input):
         if self.dino_jump:
             self.jump()
+
         if self.dino_duck:
             self.duck()
         if self.dino_run:
@@ -61,10 +66,12 @@ class Dinosaur(Sprite):
             self.dino_jump = True
             self.dino_run = False
             self.dino_duck = False
+            pygame.mixer.Sound.play(self.jump_sound)
         elif user_input[pygame.K_DOWN] and not self.dino_jump:
             self.dino_duck = True
             self.dino_run = False
             self.dino_jump = False
+
         elif not self.dino_jump:
             self.dino_run = True
             self.dino_jump = False
@@ -107,7 +114,7 @@ class Dinosaur(Sprite):
             if transition_time < 0:
                 self.has_lives = False
 
-    def check_visibility(self,screen):
+    def check_visibility(self, screen):
         if self.shield:
             time_to_show = round( (self.shield_time_up - pygame.time.get_ticks())/1000,2 )
             if(time_to_show>=0):

@@ -1,15 +1,16 @@
 import pygame
 
-from dino_runner.components.text_utils import get_score_element
 from dino_runner.components.player_hearts.player_heart_manager import PlayerHeartManager
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacle_manager import ObstacleManager
+from dino_runner.components.text_utils import get_score_element, get_centered_message
 from dino_runner.components.power_up.power_up_manager import PowerUpManager
 from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, JUMPING, DEFAULT_TYPE
 
 class Game:
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()
         pygame.display.set_caption(TITLE)
         pygame.display.set_icon(ICON)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -19,6 +20,8 @@ class Game:
         self.x_pos_bg = 0
         self.y_pos_bg = 380
         self.points = 0
+        self.best_score = 0
+        self.running = True
         self.death_count = 0
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
@@ -80,3 +83,50 @@ class Game:
 
     def create_comment(self):
         self.power_up_manager.reset_power_ups(self.points)
+
+    def show_menu(self, death_count = 0):
+        self.running = True
+        white_color = (255,255,255)
+        self.screen.fill(white_color)
+
+        self.print_menu_elements(self.death_count if death_count == 0 else death_count)
+
+        pygame.display.update()
+
+        self.handle_key_events_on_menu()
+
+    def print_menu_elements(self, death_count = 0):
+        half_screen_height = SCREEN_HEIGHT // 2
+
+        if death_count == 0:
+            text, text_rect = get_centered_message("Press any Key to Start")
+            self.screen.blit(text, text_rect)
+        elif death_count > 0:
+            self.update_best_score()
+            text, text_rect = get_centered_message("Press any Key to Restart")
+            score, score_rect = get_centered_message(f"Your Current Score: {str(self.points)}", height=half_screen_height + 50)
+            best_score, best_score_rect = get_centered_message(f"Your Best Score: {str(self.best_score)}", height=half_screen_height + 75)
+            death, death_rect = get_centered_message(f"Your Death Count: {str(self.death_count)}", height=half_screen_height + 100)
+            self.screen.blit(text, text_rect)
+            self.screen.blit(score, score_rect)
+            self.screen.blit(death, death_rect)
+            self.screen.blit(best_score, best_score_rect)
+            self.player_heart_manager = PlayerHeartManager()
+            self.obstacle_manager = ObstacleManager()
+
+    def handle_key_events_on_menu(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+                self.playing = False
+                pygame.display.quit()
+                pygame.quit()
+                exit()
+
+            if event.type == pygame.KEYDOWN:
+                self.points = 0
+                self.run()
+
+    def update_best_score(self):
+        if self.points > self.best_score:
+            self.best_score = self.points
