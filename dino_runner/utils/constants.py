@@ -70,3 +70,13 @@ BG = pygame.image.load(os.path.join(IMG_DIR, 'Other/Track.png'))
 HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
 
 DEFAULT_TYPE = "default"
+
+SHIELD_TYPE = "shield"
+HAMMER_TYPE = "hammer"
+
+SOUND_FOLDER = "dino_runner\\assets\\Sounds\\"
+SOUND_GAME_OVER = f"{SOUND_FOLDER}mario-bros-game-over.mp3"
+SOUND_JUMP = f"{SOUND_FOLDER}mario-bros-jump.mp3"
+SOUND_POWER_UP = f"{SOUND_FOLDER}mario-bros-power-up.mp3"
+SOUND_STAR = f"{SOUND_FOLDER}mario-bros-star.mp3"
+SOUND_BACKGROUND = f"{SOUND_FOLDER}mario-bros-background.mp3"
